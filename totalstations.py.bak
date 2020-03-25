@@ -7,8 +7,6 @@
 
 .. moduleauthor::Zoltan Siki <siki@agt.bme.hu>
 """
-from __future__ import print_function
-from builtins import object
 
 import re
 from .base_classes import Angle
@@ -957,8 +955,7 @@ if __name__ == "__main__":
         try:
             toexec = ext2class[os.path.splitext(sys.argv[1])[1].lower()]
         except KeyError:
-            # fix_print_with_import
-            print(('Unknown extension for file', sys.argv[1]))
+            print('Unknown extension for file', sys.argv[1])
             sys.exit(1)
 
         if len(sys.argv) == 3:

@@ -18,7 +18,7 @@ Variables set:
     :max_iteration: maximal number of iterations for area division
     :gama_path: full path to gama-local, default plug-in dir
 """
-from qgis.PyQt.QtCore import QDir, QFileInfo
+from PyQt4.QtCore import QDir, QFileInfo
 
 # dialogs
 fontname = 'DejaVu Sans Mono'

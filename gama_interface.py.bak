@@ -7,18 +7,15 @@
 
 .. moduleauthor::Zoltan Siki <siki@agt.bme.hu>
 """
-from __future__ import absolute_import
-from builtins import str
-from builtins import range
-from builtins import object
 
 import math
 # surveying calculation modules
-from . import config
-from .base_classes import *
-from .surveying_util import *
-from qgis.PyQt.QtCore import QDir, QFile, QFileInfo, QIODevice, QTemporaryFile, QProcess, QSettings
-from qgis.PyQt.QtXml import QDomDocument
+import config
+from base_classes import *
+from surveying_util import *
+from PyQt4.QtCore import QDir, QFile, QFileInfo, QIODevice, QTemporaryFile, \
+                        QProcess, QSettings
+from PyQt4.QtXml import QDomDocument, QXmlSimpleReader, QXmlInputSource
 
 class GamaInterface(object):
     """ Interface class to GNU Gama

@@ -6,10 +6,9 @@
 
 .. moduleauthor: Zoltan Siki <siki@agt.bme.hu>
 """
-from __future__ import absolute_import
-from qgis.PyQt.QtWidgets import QDialog, QMessageBox
-from .coords import Ui_CoordDialog
-from .base_classes import tr
+from PyQt4.QtGui import QDialog, QMessageBox
+from coords import Ui_CoordDialog
+from base_classes import tr
 
 class CoordDialog(QDialog):
     """ Class for coords of division line dialog

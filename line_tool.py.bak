@@ -7,19 +7,17 @@
 .. moduleauthor: Zoltan Siki <siki@agt.bme.hu>
 
 """
-from __future__ import absolute_import
-from builtins import str
 from math import fabs, atan2, atan, sin, cos, pi
-from qgis.PyQt.QtCore import Qt, QSettings
-from qgis.PyQt.QtWidgets import QMessageBox
+from PyQt4.QtCore import Qt, SIGNAL, QSettings
+from PyQt4.QtGui import QMessageBox
 from qgis.gui import QgsMapToolEmitPoint, QgsRubberBand, QgsMapTool
 from qgis.core import *
 from qgis.utils import QGis
 
-from . import config
-from .base_classes import tr
-from .area_dialog import AreaDialog
-from .coord_dialog import CoordDialog
+import config
+from base_classes import tr
+from area_dialog import AreaDialog
+from coord_dialog import CoordDialog
 
 class LineMapTool(QgsMapToolEmitPoint):
     """ Class implements rubberband line tool for polygon division
@@ -112,7 +110,7 @@ class LineMapTool(QgsMapToolEmitPoint):
         except:
             pass
         super(LineMapTool, self).deactivate()
-        self.deactivated.emit()
+        self.emit(SIGNAL("deactivated()"))
 
     def divide(self):
         """ Divide the selected polygon.
