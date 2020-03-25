@@ -10,7 +10,7 @@ from __future__ import absolute_import
 from builtins import str, range
 
 import ctypes, sys
-from PyQt5.QtCore import (
+from qgis.PyQt.QtCore import (
     QCoreApplication,
     QDir,
     QFile,
@@ -20,7 +20,7 @@ from PyQt5.QtCore import (
     Qt,
     QSettings,
 )
-from PyQt5.QtWidgets import (
+from qgis.PyQt.QtWidgets import (
     QDialog,
     QFileDialog,
     QListWidgetItem,
@@ -28,12 +28,13 @@ from PyQt5.QtWidgets import (
     QProgressDialog,
     QApplication,
 )
-from PyQt5.QtGui import QPainter
-from PyQt5.Qt import QPrintDialog, QPrinter, QAbstractPrintDialog
-from PyQt5.QtXml import QDomDocument
+from qgis.PyQt.QtGui import QPainter
+from qgis.PyQt.Qt import QPrintDialog, QPrinter, QAbstractPrintDialog
+from qgis.PyQt.QtXml import QDomDocument
 from .batch_plotting import Ui_BatchPlottingDialog
 from qgis.core import *
-
+from qgis.gui import *
+from qgis.utils import *
 from . import config
 from .surveying_util import get_vector_layers_by_type, get_features
 from .base_classes import tr
@@ -69,7 +70,7 @@ class BatchPlottingDialog(QDialog):
         self.pdfpath = ""
 
         if self.batch_plotting:
-            self.ui.OutputPDFEdit.setText(QgsAtlasComposition(None).filenamePattern())
+            self.ui.OutputPDFEdit.setText(QgsPrintLayout(None).filenamePattern())
             self.ui.SingleFileCheckbox.stateChanged.connect(
                 self.changedSingleFileCheckbox
             )
@@ -105,7 +106,7 @@ class BatchPlottingDialog(QDialog):
             self.ui.LayersComboBox.setCurrentIndex(0)
             return
         # if batch plotting is true fill layers combo
-        polygon_layers = get_vector_layers_by_type(QGis.Polygon)
+        polygon_layers = get_vector_layers_by_type(Qgis.Polygon)
         if polygon_layers is None:
             return
         for layer in polygon_layers:
@@ -172,7 +173,7 @@ class BatchPlottingDialog(QDialog):
             self.ui.LayersComboBox.setFocus()
             return
         # check if one composition template is selected
-        if self.ui.TemplateList.selectedItems() == []:
+        if not self.ui.TemplateList.selectedItems():
             QMessageBox.warning(self, tr("Warning"), tr("Select a composer template!"))
             self.ui.TemplateList.setFocus()
             return
@@ -186,7 +187,7 @@ class BatchPlottingDialog(QDialog):
         else:
             try:
                 scale = int(self.ui.ScaleCombo.currentText())
-            except (ValueError):
+            except ValueError:
                 QMessageBox.warning(
                     self, tr("Warning"), tr("Scale must be a positive integer value!")
                 )

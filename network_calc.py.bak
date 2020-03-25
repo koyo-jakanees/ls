@@ -1,5 +1,3 @@
-from builtins import object
-
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file 'network_calc.ui'
@@ -8,12 +6,7 @@ from builtins import object
 #
 # WARNING! All changes made in this file will be lost!
 
-from qgis.PyQt import QtCore, QtGui, Qt, QtWidgets
-
-try:
-    _fromUtf8 = QtCore.Qt.QString.fromUtf8
-except AttributeError:
-    _fromUtf8 = lambda s: s
+from qgis.PyQt import QtCore, QtGui, QtWidgets
 
 
 class Ui_NetworkCalcDialog(object):

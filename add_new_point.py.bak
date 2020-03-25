@@ -1,3 +1,5 @@
+from builtins import object
+
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file 'add_new_point.ui'
