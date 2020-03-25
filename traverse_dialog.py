@@ -10,7 +10,7 @@ from __future__ import absolute_import
 from builtins import range
 import platform
 import webbrowser
-from qgis.PyQt.QtWidgets import QDialog, QListWidgetItem, QMessageBox,
+from qgis.PyQt.QtWidgets import QDialog, QListWidgetItem, QMessageBox
 from qgis.PyQt.QtCore import Qt, QSettings
 from qgis.PyQt.QtGui import QStandardItem, QFont
 from . import config

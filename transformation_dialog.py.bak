@@ -9,18 +9,20 @@
 """
 import platform
 import webbrowser
-from PyQt4.QtGui import QDialog, QFileDialog, QFont, QMessageBox
-from PyQt4.QtCore import SIGNAL, QCoreApplication, QSettings
-
+from qgis.PyQt.QtWidgets import QDialog, QFileDialog, QMessageBox
+from PyQt5.QtCore import SIGNAL, QCoreApplication, QSettings
+from qgis.PyQt.QtGui import QFont
 from . import config
 from .transformation_calc import Ui_TransformationCalcDialog
 from .base_classes import *
 from .surveying_util import *
 from .calculation import *
 
+
 class TransformationDialog(QDialog):
     """ Class for transformation calculation dialog
     """
+
     def __init__(self, log):
         """ Initialize dialog data and event handlers
         """
@@ -39,19 +41,27 @@ class TransformationDialog(QDialog):
         self.ui.CalcButton.clicked.connect(self.onCalcButton)
         self.ui.HelpButton.clicked.connect(self.onHelpButton)
         # coordinate list changed
-        self.connect(self.ui.FromLayerComboBox, SIGNAL("currentIndexChanged(const QString&)"), self.fill_common)
+        self.connect(
+            self.ui.FromLayerComboBox,
+            SIGNAL("currentIndexChanged(const QString&)"),
+            self.fill_common,
+        )
 
     def showEvent(self, event):
         """ set up initial state of dialog
 
             :param event: NOT USED
         """
-        if platform.system() == 'Linux':
+        if platform.system() == "Linux":
             # change font
-            fontname = QSettings().value("SurveyingCalculation/fontname",config.fontname)
-            fontsize = int(QSettings().value("SurveyingCalculation/fontsize",config.fontsize))
+            fontname = QSettings().value(
+                "SurveyingCalculation/fontname", config.fontname
+            )
+            fontsize = int(
+                QSettings().value("SurveyingCalculation/fontsize", config.fontsize)
+            )
             self.ui.ResultTextBrowser.setFont(QFont(fontname, fontsize))
-        log_path = QSettings().value("SurveyingCalculation/log_path",config.log_path)
+        log_path = QSettings().value("SurveyingCalculation/log_path", config.log_path)
         self.log.set_log_path(log_path)
         self.reset()
 
@@ -64,7 +74,7 @@ class TransformationDialog(QDialog):
         if clist is not None:
             self.ui.FromLayerComboBox.addItems(clist)
         # clear to file
-        self.ui.ToShapeEdit.setText('')
+        self.ui.ToShapeEdit.setText("")
         # clear comon & used list
         self.ui.CommonList.clear()
         self.ui.UsedList.clear()
@@ -94,15 +104,16 @@ class TransformationDialog(QDialog):
     def onToFileButton(self):
         """ Select target shape file
         """
-        fname = QFileDialog.getOpenFileName(None, tr('Coordinate list'),
-            filter= tr('Coordinate list file (*.shp);;'))
+        fname = QFileDialog.getOpenFileName(
+            None, tr("Coordinate list"), filter=tr("Coordinate list file (*.shp);;")
+        )
         if fname:
             self.ui.ToShapeEdit.setText(fname)
             if len(self.ui.FromLayerComboBox.currentText()):
                 # fill common list
                 self.fill_common()
         else:
-            self.ui.ToShapeEdit.setText('')
+            self.ui.ToShapeEdit.setText("")
             # clear comon & used list
             self.ui.CommonList.clear()
             self.ui.UsedList.clear()
@@ -112,7 +123,7 @@ class TransformationDialog(QDialog):
         """
         selected = self.ui.CommonList.selectedItems()
         for item in selected:
-            i  = self.ui.CommonList.row(item)
+            i = self.ui.CommonList.row(item)
             self.ui.UsedList.addItem(self.ui.CommonList.takeItem(i))
             self.used.append(self.common[i])
             del self.common[i]
@@ -126,13 +137,13 @@ class TransformationDialog(QDialog):
             self.ui.FourthRadio.setEnabled(True)
         if len(self.used) > 20:
             self.ui.FifthRadio.setEnabled(True)
-    
+
     def onRemoveButton(self):
         """ Remove selected points from used points
         """
         selected = self.ui.UsedList.selectedItems()
         for item in selected:
-            i  = self.ui.UsedList.row(item)
+            i = self.ui.UsedList.row(item)
             self.ui.CommonList.addItem(self.ui.UsedList.takeItem(i))
             self.common.append(self.used[i])
             del self.used[i]
@@ -156,7 +167,7 @@ class TransformationDialog(QDialog):
         to_name = self.ui.ToShapeEdit.text()
         if len(from_name) == 0 or len(to_name) == 0:
             return
-        to_shp = QgsVectorLayer(to_name, "tmp_to_shape", "ogr") 
+        to_shp = QgsVectorLayer(to_name, "tmp_to_shape", "ogr")
         QgsMapLayerRegistry.instance().addMapLayer(to_shp, False)
         to_points = get_known(2, "tmp_to_shape")
         QgsMapLayerRegistry.instance().removeMapLayer("tmp_to_shape")
@@ -164,11 +175,17 @@ class TransformationDialog(QDialog):
         self.common = []
         self.used = []
         if self.from_points is None:
-            QMessageBox.warning(self, tr("Warning"), \
-                tr("No points with coordinates in source coordinate list"))
+            QMessageBox.warning(
+                self,
+                tr("Warning"),
+                tr("No points with coordinates in source coordinate list"),
+            )
         elif to_points is None:
-            QMessageBox.warning(self, tr("Warning"),\
-                tr("No points with coordinates in target coordinate list"))
+            QMessageBox.warning(
+                self,
+                tr("Warning"),
+                tr("No points with coordinates in target coordinate list"),
+            )
         else:
             for from_p in self.from_points:
                 if from_p in to_points:
@@ -176,9 +193,9 @@ class TransformationDialog(QDialog):
             for p in self.common:
                 self.ui.CommonList.addItem(p)
             if len(self.common) == 0:
-                QMessageBox.warning(self, tr("Warning"),\
-                    tr("No common points in coordinate lists"))
-                
+                QMessageBox.warning(
+                    self, tr("Warning"), tr("No common points in coordinate lists")
+                )
 
     def onCalcButton(self):
         """ Start transformation calculation
@@ -187,40 +204,40 @@ class TransformationDialog(QDialog):
         if len(from_list) == 0:
             QMessageBox.warning(self, tr("Warning"), tr("Select from layer!"))
             return
-        to_list = 'tmp_to_shape'
+        to_list = "tmp_to_shape"
         p_list = []
         to_name = self.ui.ToShapeEdit.text()
         if len(to_name) == 0:
             QMessageBox.warning(self, tr("Warning"), tr("Select to shape file!"))
             return
-        to_shp = QgsVectorLayer(to_name, "tmp_to_shape", "ogr") 
+        to_shp = QgsVectorLayer(to_name, "tmp_to_shape", "ogr")
         QgsMapLayerRegistry.instance().addMapLayer(to_shp, False)
         for point_id in self.used:
             # get coords of points
             p_from = get_coord(point_id, from_list)
             p_to = get_coord(point_id, to_list)
             p_list.append([p_from, p_to])
-        w = ''
+        w = ""
         if self.ui.OrthogonalRadio.isChecked():
             tr_res = Calculation.orthogonal_transformation(p_list)
             tr_func = self.ortho_tr
-            w = tr('\nOrthogonal transformation')
+            w = tr("\nOrthogonal transformation")
         elif self.ui.AffineRadio.isChecked():
             tr_res = Calculation.affine_transformation(p_list)
             tr_func = self.affine_tr
-            w = tr('\nAffine transformation')
+            w = tr("\nAffine transformation")
         elif self.ui.ThirdRadio.isChecked():
             tr_res = Calculation.polynomial_transformation(p_list, 3)
             tr_func = self.poly3_tr
-            w = tr('\n3rd order polynomial transformation')
+            w = tr("\n3rd order polynomial transformation")
         elif self.ui.FourthRadio.isChecked():
             tr_res = Calculation.polynomial_transformation(p_list, 4)
             tr_func = self.poly4_tr
-            w = tr('\n4th order polynomial transformation')
+            w = tr("\n4th order polynomial transformation")
         elif self.ui.FifthRadio.isChecked():
             tr_res = Calculation.polynomial_transformation(p_list, 5)
             tr_func = self.poly5_tr
-            w = tr('\n5th order polynomial transformation')
+            w = tr("\n5th order polynomial transformation")
         else:
             QMessageBox.warning(self, tr("Warning"), tr("Select transformation type!"))
             return
@@ -230,17 +247,24 @@ class TransformationDialog(QDialog):
         self.log.write_log(w)
 
         # calculate transformed coordinates
-        w = tr('Point num                E from       N from       E to         N to      dE     dN')
+        w = tr(
+            "Point num                E from       N from       E to         N to      dE     dN"
+        )
         self.ui.ResultTextBrowser.append(w)
         self.log.write(w)
         for (p_from, p_to) in p_list:
             (e, n) = tr_func(p_from, tr_res)
             de = p_to.e - e
             dn = p_to.n - n
-            buf = '%-20s ' % p_from.id + \
-                '%12.3f ' % p_from.e + '%12.3f ' % p_from.n + \
-                '%12.3f ' % p_to.e + '%12.3f ' % p_to.n + \
-                '%6.3f ' % de + '%6.3f ' % dn
+            buf = (
+                "%-20s " % p_from.id
+                + "%12.3f " % p_from.e
+                + "%12.3f " % p_from.n
+                + "%12.3f " % p_to.e
+                + "%12.3f " % p_to.n
+                + "%6.3f " % de
+                + "%6.3f " % dn
+            )
             self.ui.ResultTextBrowser.append(buf)
             self.log.write(buf)
         # transform and store new points
@@ -248,12 +272,16 @@ class TransformationDialog(QDialog):
             if not p_num in self.used and not p_num in self.common:
                 p = get_coord(p_num, from_list)
                 (e, n) = tr_func(p, tr_res)
-                buf = '%-20s ' % p.id + \
-                    '%12.3f ' % p.e + '%12.3f ' % p.n + \
-                    '%12.3f ' % e + '%12.3f ' % n
+                buf = (
+                    "%-20s " % p.id
+                    + "%12.3f " % p.e
+                    + "%12.3f " % p.n
+                    + "%12.3f " % e
+                    + "%12.3f " % n
+                )
                 self.ui.ResultTextBrowser.append(buf)
                 self.log.write(buf)
-                pp = Point(p_num, e, n, pc='transformed')
+                pp = Point(p_num, e, n, pc="transformed")
                 ScPoint(pp).store_coord(2, "tmp_to_shape")
         QgsMapLayerRegistry.instance().removeMapLayer("tmp_to_shape")
 
@@ -292,11 +320,11 @@ class TransformationDialog(QDialog):
         l = 0
         e = tr[2][2]
         n = tr[2][3]
-        for j in range(0,degree+1):
-            for k in range(0,degree+1):
+        for j in range(0, degree + 1):
+            for k in range(0, degree + 1):
                 if j + k <= degree:
-                    e += tr[0][l] * math.pow(de,k) * math.pow(dn,j)
-                    n += tr[1][l] * math.pow(de,k) * math.pow(dn,j)
+                    e += tr[0][l] * math.pow(de, k) * math.pow(dn, j)
+                    n += tr[1][l] * math.pow(de, k) * math.pow(dn, j)
                     l += 1
         return (e, n)
 
@@ -331,4 +359,6 @@ class TransformationDialog(QDialog):
     def onHelpButton(self):
         """ Open user's guide at Coordinate Transformation in the default web browser.
         """
-        webbrowser.open("http://www.digikom.hu/SurveyingCalculation/usersguide.html#coordinate-transformation")
+        webbrowser.open(
+            "http://www.digikom.hu/SurveyingCalculation/usersguide.html#coordinate-transformation"
+        )

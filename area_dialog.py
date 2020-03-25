@@ -8,7 +8,7 @@
 """
 from __future__ import absolute_import
 from builtins import str
-from PyQt5.QtGui import QDialog, QMessageBox
+from qgis.PyQt.QtWidgets import QDialog, QMessageBox
 from .area_div import Ui_AreaDivDialog
 from .base_classes import tr
 
@@ -60,7 +60,10 @@ class AreaDialog(QDialog):
         if a <= 0:
             QMessageBox.warning(self, tr("Warning"), tr("Invalid area value"))
             return
-        if not self.ui.OnePointRadio.isChecked() and not self.ui.TwoPointRadio.isChecked():
+        if (
+            not self.ui.OnePointRadio.isChecked()
+            and not self.ui.TwoPointRadio.isChecked()
+        ):
             QMessageBox.warning(self, tr("Warning"), tr("Select division method"))
             return
         self.accept()

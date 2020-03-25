@@ -1,5 +1,3 @@
-from builtins import object
-
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file 'single_calc.ui'
@@ -8,7 +6,7 @@ from builtins import object
 #
 # WARNING! All changes made in this file will be lost!
 
-from qgis.PyQt import QtCore, QtGui
+from qgis.PyQt import QtCore, QtGui, QtWidgets
 
 
 class Ui_SingleCalcDialog(object):

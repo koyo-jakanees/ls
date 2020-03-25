@@ -1,5 +1,3 @@
-from builtins import object
-
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file 'coords.ui'
@@ -8,7 +6,7 @@ from builtins import object
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from qgis.PyQt import QtCore, QtGui, QtWidgets
 
 
 class Ui_CoordDialog(object):
