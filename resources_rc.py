@@ -101,10 +101,23 @@ qt_resource_struct = "\
 \x00\x00\x00\x42\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\
 "
 
+
 def qInitResources():
-    QtCore.qRegisterResourceData(0x01, qt_resource_struct, qt_resource_name, qt_resource_data)
+    QtCore.qRegisterResourceData(
+        0x01,
+        bytes(qt_resource_struct, "utf-8"),
+        bytes(qt_resource_name, "utf-8"),
+        bytes(qt_resource_data, "utf-8"),
+    )
+
 
 def qCleanupResources():
-    QtCore.qUnregisterResourceData(0x01, qt_resource_struct, qt_resource_name, qt_resource_data)
+    QtCore.qUnregisterResourceData(
+        0x01,
+        bytes(qt_resource_struct, "utf-8"),
+        bytes(qt_resource_name, "utf-8"),
+        bytes(qt_resource_data, "utf-8"),
+    )
+
 
 qInitResources()

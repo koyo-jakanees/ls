@@ -26,4 +26,5 @@ def classFactory(iface):  # pylint: disable=invalid-name
     """
     #
     from .surveying_calculation import SurveyingCalculation
+
     return SurveyingCalculation(iface)

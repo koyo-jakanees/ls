@@ -208,7 +208,7 @@ class BatchPlottingDialog(QDialog):
             selected_layer = self.ui.LayersComboBox.itemData(
                 self.ui.LayersComboBox.currentIndex()
             )
-            selected_polygons = get_features(selected_layer.name(), QGis.Polygon, True)
+            selected_polygons = get_features(selected_layer.name(), Qgis.Polygon, True)
             if selected_polygons is None:
                 QMessageBox.warning(
                     self,
@@ -236,7 +236,7 @@ class BatchPlottingDialog(QDialog):
                     if res == QMessageBox.Cancel:
                         return
                     self.ui.OutputPDFEdit.setText(
-                        QgsAtlasComposition(None).filenamePattern()
+                        QgsLayoutAtlas(None).filenamePattern()
                     )
         elif self.ui.OutputTab.currentIndex() == 1:  # to Printer
             # no need for checking
@@ -247,7 +247,7 @@ class BatchPlottingDialog(QDialog):
 
         # get map renderer of map canvas
         renderer = self.iface.mapCanvas().mapRenderer()
-        self.composition = QgsComposition(renderer)
+        self.composition = QgsLayout(renderer)
 
         # if plot to Composer View the composition must be set
         # before loading the template
@@ -293,7 +293,7 @@ class BatchPlottingDialog(QDialog):
 
             # print the complete atlas composition
             if self.ui.OutputTab.currentIndex() == 0:  # to PDF
-                self.composition.setAtlasMode(QgsComposition.ExportAtlas)
+                self.composition.setAtlasMode(QgsLayout.ExportAtlas)
 
                 if self.pdfpath == "":
                     self.pdfpath = (
