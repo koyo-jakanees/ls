@@ -8,6 +8,8 @@
 .. moduleauthor::Zoltan Siki <siki@agt.bme.hu>
 """
 from __future__ import print_function
+
+import math
 from builtins import object
 
 import re

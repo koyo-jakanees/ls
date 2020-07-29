@@ -10,10 +10,10 @@ from builtins import object
 
 from qgis.PyQt import QtCore, QtGui, QtWidgets
 
-try:
-    _fromUtf8 = QtGui.QString.fromUtf8
-except AttributeError:
-    _fromUtf8 = lambda s: s
+# try:
+#     _fromUtf8 = QtGui.QString.fromUtf8
+# except AttributeError:
+#     _fromUtf8 = lambda s: s
 
 
 class Ui_AddNewPointDialog(object):

@@ -22,7 +22,7 @@ def get_namelist(pattern):
     w = []
     layermap = QgsProject.instance().mapLayers()
     for name, layer in list(layermap.items()):
-        if layer.type() == QGis.Point and re.search(pattern, layer.name()):
+        if layer.type() == Qgis.Point and re.search(pattern, layer.name()):
             w.append(layer.name())
     if len(w):
         return w
@@ -68,7 +68,7 @@ def get_vector_layers_by_type(ftype):
         :returns: list of polygon layers or None
     """
     w = []
-    layermap = QgsMapLayerRegistry.instance().mapLayers()
+    layermap = QgsProject.instance().mapLayers()
     for n, layer in list(layermap.items()):
         if layer.type() == QgsMapLayer.VectorLayer:
             if layer.geometryType() == ftype:

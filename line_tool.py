@@ -34,7 +34,7 @@ class LineMapTool(QgsMapToolEmitPoint):
         self.layer = None
         self.canvas = self.iface.mapCanvas()
         QgsMapToolEmitPoint.__init__(self, self.canvas)
-        self.rubberBand = QgsRubberBand(self.canvas, QGis.Line)
+        self.rubberBand = QgsRubberBand(self.canvas, Qgis.Line)
         self.rubberBand.setColor(Qt.red)
         self.rubberBand.setWidth(1)
         self.startPoint = None
@@ -115,7 +115,7 @@ class LineMapTool(QgsMapToolEmitPoint):
     def showLine(self):
         """ Draw rubberband line
         """
-        self.rubberBand.reset(QGis.Line)
+        self.rubberBand.reset(QgsWkbTypes.LineGeometry)
         if (
             self.startPoint.x() == self.endPoint.x()
             or self.startPoint.y() == self.endPoint.y()
@@ -129,7 +129,7 @@ class LineMapTool(QgsMapToolEmitPoint):
         """ deactivate line tool
         """
         try:
-            self.rubberBand.reset(QGis.Line)  # erase rubberband line
+            self.rubberBand.reset(Qgis.Line)  # erase rubberband line
         except:
             pass
         super(LineMapTool, self).deactivate()
@@ -203,7 +203,7 @@ class LineMapTool(QgsMapToolEmitPoint):
             ):
                 return
             # find an internal point
-            if QGis.QGIS_VERSION > "2.4":
+            if Qgis.version() > "3.4":
                 cp = geom.pointOnSurface().vertexAt(0)
             else:
                 cp = geom.centroid().vertexAt(0)

@@ -24,7 +24,7 @@ from qgis.PyQt.QtCore import (
     QProcess,
     QSettings,
 )
-from qgis.PyQt.QtXml import QDomDocument
+from qgis.PyQt.QtXml import QDomDocument, QXmlSimpleReader, QXmlInputSource
 
 
 class GamaInterface(object):

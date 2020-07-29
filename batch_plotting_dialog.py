@@ -53,6 +53,9 @@ class BatchPlottingDialog(QDialog):
         self.ui = Ui_BatchPlottingDialog()
         self.ui.setupUi(self)
         self.iface = iface
+        self.project = QgsProject.instance()
+        self.canvas = self.iface.mapCanvas()
+        self.manager = self.project.layoutManager()
         self.ui.OutputTab.setCurrentIndex(2)
         # if batch_plotting is True -> plotting by selected polygons
         #                     False -> plot map canvas
@@ -72,7 +75,7 @@ class BatchPlottingDialog(QDialog):
         self.pdfpath = ""
 
         if self.batch_plotting:
-            self.ui.OutputPDFEdit.setText(QgsPrintLayout(None).filenamePattern())
+            self.ui.OutputPDFEdit.setText(QgsPrintLayout(self.project).filenamePattern())
             self.ui.SingleFileCheckbox.stateChanged.connect(
                 self.changedSingleFileCheckbox
             )
@@ -108,7 +111,7 @@ class BatchPlottingDialog(QDialog):
             self.ui.LayersComboBox.setCurrentIndex(0)
             return
         # if batch plotting is true fill layers combo
-        polygon_layers = get_vector_layers_by_type(Qgis.Polygon)
+        polygon_layers = get_vector_layers_by_type(QgsWkbTypes.Polygon)
         if polygon_layers is None:
             return
         for layer in polygon_layers:
@@ -136,7 +139,7 @@ class BatchPlottingDialog(QDialog):
             oldSelectedTemplate = self.ui.TemplateList.currentItem().text()
         else:
             oldSelectedTemplate = ""
-        self.ui.TemplateList.clear()
+        self.ui.TemplateList.refresh()
 
         tempdir = QDir(self.templatepath)
         if tempdir.exists():
@@ -210,7 +213,7 @@ class BatchPlottingDialog(QDialog):
             selected_layer = self.ui.LayersComboBox.itemData(
                 self.ui.LayersComboBox.currentIndex()
             )
-            selected_polygons = get_features(selected_layer.name(), Qgis.Polygon, True)
+            selected_polygons = get_features(selected_layer.name(), QgsWkbTypes.Polygon, True)
             if selected_polygons is None:
                 QMessageBox.warning(
                     self,
@@ -226,15 +229,9 @@ class BatchPlottingDialog(QDialog):
         if self.ui.OutputTab.currentIndex() == 0:  # to PDF
             if not self.ui.SingleFileCheckbox.checkState():
                 if len(self.ui.OutputPDFEdit.text()) == 0:
-                    res = QMessageBox.warning(
-                        self,
-                        tr("Warning"),
-                        tr(
-                            "The filename pattern is empty. A default one will be used."
-                        ),
-                        QMessageBox.Ok | QMessageBox.Cancel,
-                        QMessageBox.Ok,
-                    )
+                    res = QMessageBox.warning(self,tr("Warning:"),
+                                              tr("The filename pattern is empty. A default one will be used."),
+                                              QMessageBox.Ok | QMessageBox.Cancel, QMessageBox.Ok)
                     if res == QMessageBox.Cancel:
                         return
                     self.ui.OutputPDFEdit.setText(
@@ -248,8 +245,9 @@ class BatchPlottingDialog(QDialog):
             pass
 
         # get map renderer of map canvas
-        renderer = self.iface.mapCanvas().mapRenderer()
-        self.composition = QgsLayout(renderer)
+        renderer = self.iface.mapCanvas().layout()
+        self.composition = QgsPrintLayout(self.project)
+        self.composition.initializeDefaults()
 
         # if plot to Composer View the composition must be set
         # before loading the template
@@ -278,7 +276,7 @@ class BatchPlottingDialog(QDialog):
             cmap.setGridIntervalX(scale / 10)
             cmap.setGridIntervalY(scale / 10)
             cmap.setAtlasDriven(True)
-            cmap.setAtlasScalingMode(QgsComposerMap.Fixed)
+            cmap.setAtlasScalingMode(QgsPrintLayout.Fixed)
 
             # set atlas composition parameters
             atlas = self.composition.atlasComposition()
@@ -437,13 +435,12 @@ class BatchPlottingDialog(QDialog):
                 # open printer setting dialog
                 pdlg = QPrintDialog(self.printer, self)
                 pdlg.setModal(True)
-                pdlg.setOptions(QAbstractPrintDialog.None)
+                pdlg.setOptions([QAbstractPrintDialog.PrintDialogOptions, QAbstractPrintDialog.PrintDialogOption])
                 if not pdlg.exec_() == QDialog.Accepted:
                     return
-
                 QApplication.setOverrideCursor(Qt.BusyCursor)
                 # prepare for first feature, so that we know paper size to begin with
-                self.composition.setAtlasMode(QgsComposition.ExportAtlas)
+                self.composition.setAtlasMode(QgsLayout.ExportAtlas())
                 atlas.prepareForFeature(0)
 
                 # set orientation
@@ -470,21 +467,13 @@ class BatchPlottingDialog(QDialog):
                 self.composition.beginPrint(self.printer)
                 painter = QPainter(self.printer)
                 if not len(atlas.featureFilterErrorString()) == 0:
-                    QMessageBox.warning(
-                        self,
-                        tr("Atlas processing error"),
-                        tr(
-                            "Feature filter parser error: %s"
-                            % atlas.featureFilterErrorString()
-                        ),
-                    )
+                    QMessageBox.warning(self, tr("Atlas processing error"),
+                                        tr("Feature filter parser error: %s" % atlas.featureFilterErrorString()))
                     QApplication.restoreOverrideCursor()
                     return
 
                 atlas.beginRender()
-                progress = QProgressDialog(
-                    tr("Rendering maps..."), tr("Abort"), 0, atlas.numFeatures(), self
-                )
+                progress = QProgressDialog(tr("Rendering maps..."), tr("Abort"), 0, atlas.numFeatures(), self)
                 for featureI in range(0, atlas.numFeatures()):
                     progress.setValue(featureI + 1)
                     # process input events in order to allow cancelling
@@ -513,7 +502,7 @@ class BatchPlottingDialog(QDialog):
 
             elif self.ui.OutputTab.currentIndex() == 2:  # to Composer View
                 # create new composer
-                self.composition.setAtlasMode(QgsComposition.PreviewAtlas)
+                self.composition.setAtlasMode(QgsPrintLayout.PreviewAtlas)
                 composer.composerWindow().on_mActionAtlasPreview_triggered(True)
                 atlas.parameterChanged.emit()
                 # Increase the reference count of the composer object

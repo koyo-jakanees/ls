@@ -91,13 +91,7 @@ class SurveyingCalculation(object):
         if len(log_path_2) > 0:
             log_path = log_path_2
         else:
-            log_path = QDir.cleanPath(
-                self.plugin_dir
-                + QDir.separator()
-                + "log"
-                + QDir.separator()
-                + "log.txt"
-            )
+            log_path = QDir.cleanPath(self.plugin_dir + QDir.separator() + "log" + QDir.separator() + "log.txt")
         self.log = ResultLog(log_path)
         self.newp_dlg = NewPointDialog()
         self.single_dlg = SingleDialog(self.log)
@@ -179,15 +173,9 @@ class SurveyingCalculation(object):
             self.iface.mainWindow(),
         )
         self.sc_fb = QAction(
-            QIcon(QDir(icon_dir).absoluteFilePath("new_fb.png")),
-            tr("New fieldbook ..."),
-            self.iface.mainWindow(),
-        )
+            QIcon(QDir(icon_dir).absoluteFilePath("new_fb.png")), tr("New fieldbook ..."), self.iface.mainWindow())
         self.sc_load = QAction(
-            QIcon(QDir(icon_dir).absoluteFilePath("import_fieldbook.png")),
-            tr("Import fieldbook ..."),
-            self.iface.mainWindow(),
-        )
+            QIcon(QDir(icon_dir).absoluteFilePath("import_fieldbook.png")), tr("Import fieldbook ..."), self.iface.mainWindow())
         self.sc_addp = QAction(
             QIcon(QDir(icon_dir).absoluteFilePath("addp.png")),
             tr("Add new point ..."),

@@ -176,20 +176,14 @@ class Ui_BatchPlottingDialog(object):
         self.SingleFileCheckbox.setText(
             _translate("BatchPlottingDialog", "Single PDF file (multi-page)")
         )
-        self.OutputTab.setTabText(
-            self.OutputTab.indexOf(self.toPDF),
-            _translate("BatchPlottingDialog", "To PDF"),
-        )
+        self.OutputTab.setTabText(self.OutputTab.indexOf(self.toPDF), _translate("BatchPlottingDialog", "To PDF"))
         self.OutputTab.setTabText(
             self.OutputTab.indexOf(self.toPrinter),
             _translate("BatchPlottingDialog", "To Printer"),
         )
         self.ComposerLabel.setText(_translate("BatchPlottingDialog", "Composer name:"))
-        self.ComposerEmptyLabel.setText(
-            _translate(
-                "BatchPlottingDialog", "If empty name will be genrated automatically."
-            )
-        )
+        self.ComposerEmptyLabel.setText(_translate("BatchPlottingDialog",
+                                                   "If empty name will be genrated automatically."))
         self.OutputTab.setTabText(
             self.OutputTab.indexOf(self.toComposerView),
             _translate("BatchPlottingDialog", "To Composer View"),
