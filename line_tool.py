@@ -33,8 +33,8 @@ class LineMapTool(QgsMapToolEmitPoint):
         self.iface = iface
         self.layer = None
         self.canvas = self.iface.mapCanvas()
-        QgsMapToolEmitPoint.__init__(self, self.canvas)
-        self.rubberBand = QgsRubberBand(self.canvas, Qgis.Line)
+        QgsMapToolEmitPoint.__init__(self, self.canvas)  # TODO change to python3 MRO inheritance
+        self.rubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.LineGeometry)
         self.rubberBand.setColor(Qt.red)
         self.rubberBand.setWidth(1)
         self.startPoint = None
@@ -46,7 +46,7 @@ class LineMapTool(QgsMapToolEmitPoint):
         """
         self.startPoint = self.endPoint = None
         self.isEmittingPoint = False
-        self.rubberBand.reset(Qgis.Line)
+        self.rubberBand.reset(QgsWkbTypes.LineGeometry)
 
     def canvasPressEvent(self, e):
         """ handler to handle left button down, start rubberband line
@@ -88,8 +88,8 @@ class LineMapTool(QgsMapToolEmitPoint):
         """
         self.isEmittingPoint = False
         if (
-            self.startPoint.x() == self.endPoint.x()
-            or self.startPoint.y() == self.endPoint.y()
+                self.startPoint.x() == self.endPoint.x()
+                or self.startPoint.y() == self.endPoint.y()
         ):
             return
         self.divide()
@@ -117,8 +117,8 @@ class LineMapTool(QgsMapToolEmitPoint):
         """
         self.rubberBand.reset(QgsWkbTypes.LineGeometry)
         if (
-            self.startPoint.x() == self.endPoint.x()
-            or self.startPoint.y() == self.endPoint.y()
+                self.startPoint.x() == self.endPoint.x()
+                or self.startPoint.y() == self.endPoint.y()
         ):
             return
         self.rubberBand.addPoint(self.startPoint, False)
@@ -190,16 +190,16 @@ class LineMapTool(QgsMapToolEmitPoint):
         geom_line = QgsGeometry.fromPolyline([point1, point2])  # divider
         if not geom.intersects(geom_line):
             if (
-                QMessageBox.question(
-                    self.iface.mainWindow(),
-                    tr("Question"),
-                    tr(
-                        "Line does not intersects polygon, line will be shifted into the polygon. Do you want to continue?"
-                    ),
-                    QMessageBox.Yes,
-                    QMessageBox.No,
-                )
-                == QMessageBox.No
+                    QMessageBox.question(
+                        self.iface.mainWindow(),
+                        tr("Question"),
+                        tr(
+                            "Line does not intersects polygon, line will be shifted into the polygon. Do you want to continue?"
+                        ),
+                        QMessageBox.Yes,
+                        QMessageBox.No,
+                    )
+                    == QMessageBox.No
             ):
                 return
             # find an internal point

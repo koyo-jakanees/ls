@@ -75,7 +75,7 @@ class BatchPlottingDialog(QDialog):
         self.pdfpath = ""
 
         if self.batch_plotting:
-            self.ui.OutputPDFEdit.setText(QgsPrintLayout(self.project).filenamePattern())
+            self.ui.OutputPDFEdit.setText(QgsPrintLayout(self.project).name())
             self.ui.SingleFileCheckbox.stateChanged.connect(
                 self.changedSingleFileCheckbox
             )
