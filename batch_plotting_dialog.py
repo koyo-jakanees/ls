@@ -5,6 +5,7 @@
     :synopsis: GUI for batch plotting
 
 .. moduleauthor: Zoltan Siki <siki@agt.bme.hu>
+                Modified by Davince Koyo
 """
 from __future__ import absolute_import
 from builtins import str, range
@@ -35,6 +36,7 @@ from .batch_plotting import Ui_BatchPlottingDialog
 from qgis.core import *
 from qgis.gui import *
 from qgis.utils import *
+# from qgis.utils import iface
 from . import config
 from .surveying_util import get_vector_layers_by_type, get_features
 from .base_classes import tr
